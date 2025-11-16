@@ -1,4 +1,5 @@
 
+
 import React, { useMemo } from 'react';
 import { type StudySession, type Page } from '../types';
 import { ArrowLeftIcon, PlusCircleIcon, DocumentReportIcon, TipsIcon, ChartBarIcon, MotivationIcon } from './Icons';
@@ -83,19 +84,22 @@ export const StudyTrackerPage: React.FC<StudyTrackerPageProps> = ({ studyHistory
         
         // Calculate Streak
         let currentStreak = 0;
-        // FIX: Add explicit type `string[]` to `uniqueDates` to avoid type inference issues with `new Date()`.
-        const uniqueDates: string[] = [...new Set(studyHistory.map(s => s.date))].sort().reverse();
-        if (uniqueDates[0] === today) {
-            currentStreak = 1;
-            for(let i=0; i < uniqueDates.length - 1; i++) {
-                const currentDate = new Date(uniqueDates[i]);
-                const prevDate = new Date(uniqueDates[i+1]);
-                const diffTime = currentDate.getTime() - prevDate.getTime();
-                const diffDays = diffTime / (1000 * 3600 * 24);
-                if (diffDays === 1) {
-                    currentStreak++;
-                } else {
-                    break;
+        const uniqueDates = [...new Set<string>(studyHistory.map(s => s.date))].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+        if (uniqueDates.length > 0) {
+            const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+            if (uniqueDates[0] === today || uniqueDates[0] === yesterdayStr) {
+                currentStreak = 1;
+                for (let i = 0; i < uniqueDates.length - 1; i++) {
+                    const currentDate = new Date(uniqueDates[i]);
+                    const prevDate = new Date(uniqueDates[i+1]);
+                    const diffTime = currentDate.getTime() - prevDate.getTime();
+                    const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
+                    if (diffDays === 1) {
+                        currentStreak++;
+                    } else {
+                        break;
+                    }
                 }
             }
         }

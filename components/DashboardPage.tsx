@@ -1,3 +1,5 @@
+
+
 import React, { useMemo } from 'react';
 import { type Session } from '@supabase/supabase-js';
 import { type StudySession, type StudyPlan, type Page } from '../types';
@@ -33,8 +35,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ session, studyHistory, st
 
         // Calculate Streak
         let streak = 0;
-        // FIX: Add explicit types to sort callback parameters to avoid type inference issues with `new Date()`.
-        const uniqueDates = [...new Set(studyHistory.map(s => s.date))].sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime());
+        // FIX: Explicitly provide the generic type to `new Set` to ensure TypeScript correctly infers the array type as `string[]`.
+        // This allows type inference for the sort callback parameters, making the explicit types redundant.
+        const uniqueDates = [...new Set<string>(studyHistory.map(s => s.date))].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
         if (uniqueDates.length > 0) {
             const todayStr = new Date().toISOString().split('T')[0];
             const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0];

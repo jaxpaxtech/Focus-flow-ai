@@ -1,5 +1,5 @@
 {
-  "name": "Copy of Copy of Copy of FocusFlow: AI Study Planner",
+  "name": "FocusFlow: AI Study Planner",
   "description": "A smart productivity coach that generates personalized study plans, tracks progress, and keeps you motivated. Features both text-based chat and a real-time voice conversation mode powered by the Gemini API.",
   "requestFramePermissions": [
     "microphone"

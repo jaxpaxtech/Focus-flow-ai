@@ -5,7 +5,9 @@ import React from 'react';
 // New Logo Icon
 export const LogoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+    <path d="M21.42 10.72L12 16l-9.42-5.28" />
+    <path d="M3.23 7.93L12 3l8.77 4.93" />
+    <path d="M4 12v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
   </svg>
 );
 
