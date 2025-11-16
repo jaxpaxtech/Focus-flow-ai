@@ -11,7 +11,6 @@ const WelcomePage: React.FC<WelcomePageProps> = ({ onInitialise }) => {
   return (
     <div className="flex flex-col h-screen bg-[#0A0A0A] text-white animate-[fadeIn_1s_ease-in-out]">
       {/* Header is reused, but mode change is disabled for this page */}
-      {/* FIX: Add missing currentPage and onNavigate props to Header component */}
       <Header currentMode="text" currentPage="dashboard" onModeChange={() => {}} onNavigate={() => {}} />
       <main className="flex-1 flex flex-col items-center justify-center text-center p-4 relative overflow-hidden">
         {/* Background decorative glowing effects */}

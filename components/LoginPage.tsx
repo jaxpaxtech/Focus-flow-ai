@@ -105,7 +105,6 @@ const LoginPage: React.FC<LoginPageProps> = () => {
 
   return (
     <div className="flex flex-col h-screen bg-[#0A0A0A] text-white animate-[fadeIn_1s_ease-in-out]">
-      {/* FIX: Add missing currentPage and onNavigate props to Header component */}
       <Header currentMode="text" currentPage="dashboard" onModeChange={() => {}} onNavigate={() => {}} />
       <main className="flex-1 flex flex-col items-center justify-center p-4 relative overflow-hidden">
         <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>

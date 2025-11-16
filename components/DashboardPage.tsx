@@ -33,7 +33,8 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ session, studyHistory, st
 
         // Calculate Streak
         let streak = 0;
-        const uniqueDates = [...new Set(studyHistory.map(s => s.date))].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+        // FIX: Add explicit types to sort callback parameters to avoid type inference issues with `new Date()`.
+        const uniqueDates = [...new Set(studyHistory.map(s => s.date))].sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime());
         if (uniqueDates.length > 0) {
             const todayStr = new Date().toISOString().split('T')[0];
             const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0];

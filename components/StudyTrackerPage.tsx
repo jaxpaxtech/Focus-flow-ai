@@ -83,7 +83,8 @@ export const StudyTrackerPage: React.FC<StudyTrackerPageProps> = ({ studyHistory
         
         // Calculate Streak
         let currentStreak = 0;
-        const uniqueDates = [...new Set(studyHistory.map(s => s.date))].sort().reverse();
+        // FIX: Add explicit type `string[]` to `uniqueDates` to avoid type inference issues with `new Date()`.
+        const uniqueDates: string[] = [...new Set(studyHistory.map(s => s.date))].sort().reverse();
         if (uniqueDates[0] === today) {
             currentStreak = 1;
             for(let i=0; i < uniqueDates.length - 1; i++) {
