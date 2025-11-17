@@ -24,7 +24,7 @@ export const BottomBar: React.FC<BottomBarProps> = ({ motivation }) => {
         </div>
       </div>
       <div className="text-center text-gray-600 pt-2 mt-2 border-t border-white/10">
-        FocusFlow: Your AI Study Planner
+        FocusFlow: Your AI Study Planner | Developed by Prince
       </div>
     </footer>
   );

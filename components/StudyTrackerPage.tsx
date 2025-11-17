@@ -226,16 +226,21 @@ export const StudyTrackerPage: React.FC<StudyTrackerPageProps> = ({ studyHistory
             </div>
             
              {/* Footer */}
-             <footer className="p-2 border-t border-[var(--primary-glow)]/20 glass-panel flex justify-between items-center text-xs font-mono">
-                <div className="flex items-center space-x-2 text-green-400">
-                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                    <span>AI FOCUS SCORE: {focusScore}% (GOOD)</span>
+             <footer className="p-2 border-t border-[var(--primary-glow)]/20 glass-panel text-xs font-mono">
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2 text-green-400">
+                        <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                        <span>AI FOCUS SCORE: {focusScore}% (GOOD)</span>
+                    </div>
+                    <div className="text-center text-gray-400 hidden sm:block">
+                        Consistency builds excellence.
+                    </div>
+                    <div className="text-cyan-300">
+                        STUDY STREAK: 🔥 {streak} DAYS
+                    </div>
                 </div>
-                <div className="text-center text-gray-400 hidden sm:block">
-                    Consistency builds excellence.
-                </div>
-                <div className="text-cyan-300">
-                    STUDY STREAK: 🔥 {streak} DAYS
+                <div className="text-center text-gray-600 pt-2 mt-2 border-t border-white/10">
+                    Developed by Prince
                 </div>
             </footer>
         </div>
