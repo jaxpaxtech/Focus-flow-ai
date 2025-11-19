@@ -1,11 +1,14 @@
-import { GoogleGenAI, Chat, LiveServerMessage, Modality, Blob, FunctionDeclaration, Type, GenerateContentResponse } from "@google/genai";
+
+import { GoogleGenAI, Chat, LiveServerMessage, Modality, Blob as GenAIBlob, FunctionDeclaration, Type, GenerateContentResponse } from "@google/genai";
 
 const API_KEY = process.env.API_KEY;
-if (!API_KEY) {
-  throw new Error("API_KEY environment variable is not set");
-}
 
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// Export a check to allow the UI to handle missing keys gracefully
+export const isGeminiConfigured = !!API_KEY;
+
+// Initialize the client only if the key exists. 
+// We avoid throwing top-level errors to prevent the app from crashing on load.
+const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 const SYSTEM_INSTRUCTION = `
 You are FocusFlow — an AI-powered Study Planner designed to help students organize, track, and improve their study sessions with intelligence, empathy, and motivation.
@@ -115,6 +118,9 @@ export const logStudySessionTool: FunctionDeclaration = {
 };
 
 export const initChat = (): Chat => {
+  if (!ai) {
+    throw new Error("Gemini API is not initialized. Missing API Key.");
+  }
   return ai.chats.create({
     model: 'gemini-2.5-flash',
     config: {
@@ -176,7 +182,7 @@ function encode(bytes: Uint8Array) {
   return btoa(binary);
 }
 
-function createBlob(data: Float32Array): Blob {
+function createBlob(data: Float32Array): GenAIBlob {
   const l = data.length;
   const int16 = new Int16Array(l);
   for (let i = 0; i < l; i++) {
@@ -196,6 +202,10 @@ interface LiveCallbacks {
 }
 
 export const connectLive = async (callbacks: LiveCallbacks) => {
+    if (!ai) {
+      throw new Error("Gemini API is not initialized. Missing API Key.");
+    }
+    
     let nextStartTime = 0;
     const sources = new Set<AudioBufferSourceNode>();
     

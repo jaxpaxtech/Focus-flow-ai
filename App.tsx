@@ -1,5 +1,4 @@
-
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { type AppMode, type Message, type StudyPlan, type Page, type StudySession, type ActiveTimerSession, type StudyPlanSubject } from './types';
 import Header from './components/Header';
 import ChatView from './components/ChatView';
@@ -14,9 +13,10 @@ import { StudyTrackerPage } from './components/StudyTrackerPage';
 import StudyTimer from './components/StudyTimer';
 import ActiveTimer from './components/ActiveTimer';
 import DashboardPage from './components/DashboardPage';
-import { initChat, sendMessage } from './services/geminiService';
+import DeploymentErrorPage from './components/DeploymentErrorPage';
+import { initChat, sendMessage, isGeminiConfigured } from './services/geminiService';
+import { isSupabaseConfigured, supabase } from './services/supabase';
 import { type Chat, type GenerateContentResponse } from '@google/genai';
-import { supabase } from './services/supabase';
 import { type Session } from '@supabase/supabase-js';
 
 
@@ -49,7 +49,7 @@ const parseStudyPlan = (text: string): StudyPlan | null => {
 
 
 const App: React.FC = () => {
-  const [appState, setAppState] = useState<'animating' | 'welcome' | 'auth' | 'running'>('animating');
+  const [appState, setAppState] = useState<'animating' | 'welcome' | 'auth' | 'running' | 'configError'>('animating');
   const [session, setSession] = useState<Session | null>(null);
   const [mode, setMode] = useState<AppMode>('text');
   const [page, setPage] = useState<Page>('console');
@@ -64,7 +64,16 @@ const App: React.FC = () => {
   const [activeTimerSession, setActiveTimerSession] = useState<ActiveTimerSession | null>(null);
   const [dbError, setDbError] = useState<string | null>(null);
 
+  // Deployment Configuration Check
   useEffect(() => {
+    if (!isGeminiConfigured || !isSupabaseConfigured || !supabase) {
+      setAppState('configError');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (appState === 'configError' || !supabase) return;
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
@@ -82,7 +91,7 @@ const App: React.FC = () => {
   }, [appState]);
 
   useEffect(() => {
-    if (session) {
+    if (session && supabase) {
       const fetchHistory = async () => {
         setDbError(null);
         const { data, error } = await supabase
@@ -107,11 +116,17 @@ const App: React.FC = () => {
   }, [session]);
 
   useEffect(() => {
-    chatSession.current = initChat();
+    if (isGeminiConfigured) {
+      try {
+        chatSession.current = initChat();
+      } catch (e) {
+        console.error("Failed to init chat:", e);
+      }
+    }
   }, []);
 
   const handleSendMessage = useCallback(async (messageText: string) => {
-    if (!messageText.trim() || !chatSession.current || !session) return;
+    if (!messageText.trim() || !chatSession.current || !session || !supabase) return;
 
     const userMessage: Message = { id: Date.now().toString(), role: 'user', text: messageText };
     setMessages(prev => [...prev, userMessage]);
@@ -186,7 +201,7 @@ const App: React.FC = () => {
   };
   
   const handleSessionComplete = async (durationMinutes: number) => {
-      if (!session) return;
+      if (!session || !supabase) return;
       
       const newSessionData = {
           user_id: session.user.id,
@@ -238,7 +253,7 @@ const App: React.FC = () => {
   }, [activeTimerSession]);
 
   const handleEndSession = useCallback(async (timeLeft: number, completed: boolean) => {
-      if (!activeTimerSession || !studyPlan || !session) return;
+      if (!activeTimerSession || !studyPlan || !session || !supabase) return;
       
       const sessionDurationHours = (activeTimerSession.duration - timeLeft) / 3600;
 
@@ -281,6 +296,7 @@ const App: React.FC = () => {
   }, [activeTimerSession, studyPlan, session]);
 
   const handleLogout = async () => {
+    if (!supabase) return;
     const { error } = await supabase.auth.signOut();
     if(error) console.error('Error logging out:', error);
   };
@@ -320,6 +336,10 @@ const App: React.FC = () => {
         );
     }
   };
+
+  if (appState === 'configError') {
+    return <DeploymentErrorPage missingGeminiKey={!isGeminiConfigured} missingSupabaseConfig={!isSupabaseConfigured || !supabase} />;
+  }
 
   if (appState === 'animating') {
     return <WelcomeAnimation onAnimationComplete={() => setAppState('welcome')} />;
