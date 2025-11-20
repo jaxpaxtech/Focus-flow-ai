@@ -1,5 +1,22 @@
 {
-  "env": {
-    "VITE_GEMINI_API_KEY": "@gemini-api-key"
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "installCommand": "npm install"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "build": {
+    "env": {
+      "VITE_GEMINI_API_KEY": "gemini-api-key"
+    }
   }
 }
