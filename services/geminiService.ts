@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Chat, LiveServerMessage, Modality, Blob as GenAIBlob, FunctionDeclaration, Type, GenerateContentResponse } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 // Export a check to allow the UI to handle missing keys gracefully
 export const isGeminiConfigured = !!API_KEY;
